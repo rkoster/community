@@ -215,7 +215,7 @@ Eligible voters that are not shown are encouraged to have their name added by
 - 	Richard Cox	 : 	SUSE
 - 	Richard Johnson	 : 	VMware
 - 	Robert Sullivan	 : 	VMware
-- 	Ruben Koster	 : 	Stark & Wayne
+- 	Ruben Koster	 : 	VMware
 - 	Ryan Hall	 : 	VMware
 - 	Ryan Moran	 : 	VMware
 - 	Ryker Reed	 : 	VMware
