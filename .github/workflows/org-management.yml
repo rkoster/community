@@ -18,16 +18,17 @@ jobs:
     services:
       ghproxy:
         image: gcr.io/k8s-prow/ghproxy
-        args: --legacy-disable-disk-cache-partitions-by-auth-header=false --cache-dir=/cache --cache-sizeGB=5
+        # options: --entrypoint /support/run-ghproxy.sh
         ports:
         - 8888:8888
         volumes:
-        - ~/ghproxy-cache:/cache
+        - ${{ github.workspace }}/ghproxy-cache:/cache
+#        - ${{ github.workspace }}/.github/workflows/support:/support
     steps:
       - name: ghproxy-cache
         uses: actions/cache@v3
         with:
-          path: ~/ghproxy-cache
+          path: ${{ github.workspace }}/ghproxy-cache
           key: ${{ runner.os }}-ghproxy-cache-${{ hashFiles('org/*.yml') }}
           restore-keys: |
             ${{ runner.os }}-ghproxy-cache-
@@ -45,7 +46,21 @@ jobs:
         uses: docker://gcr.io/k8s-prow/peribolos
         with:
           entrypoint: /ko-app/peribolos
-          args: --confirm=true --github-endpoint http://ghproxy:8888 --required-admins=thelinuxfoundation --min-admins=5 --github-app-id=${{ secrets.GH_APP_ID }} --github-app-private-key-path=private_key --require-self=false --config-path=org/cloudfoundry.yml --fix-org --fix-org-members --fix-repos --fix-teams --fix-team-members --fix-team-repos
+          args: >-
+            --confirm=true
+            --github-endpoint http://ghproxy:8888
+            --required-admins=thelinuxfoundation
+            --min-admins=5
+            --github-app-id=${{ secrets.GH_APP_ID }}
+            --github-app-private-key-path=private_key
+            --require-self=false
+            --config-path=org/cloudfoundry.yml
+            --fix-org
+            --fix-org-members
+            --fix-repos
+            --fix-teams
+            --fix-team-members
+            --fix-team-repos
       - name: generate-peribolos-dump
         if: ${{ steps.peribolos.outcome }} == 'failure'
         uses: docker://gcr.io/k8s-prow/peribolos
